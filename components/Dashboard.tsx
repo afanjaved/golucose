@@ -39,7 +39,27 @@ export default function Dashboard({ readings }: { readings: Reading[] }) {
         <button onClick={() => window.print()} style={{padding:'10px 14px', borderRadius:10, border:'1px solid #d9dde2', background:'#fff', cursor:'pointer'}}>Print / Save PDF</button>
       </div>
 
-      <section className="grid cards">
+      <section className="card">
+        <h2 style={{marginTop:0}}>Daily readings</h2>
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Fasting</th><th>Breakfast insulin</th><th>Post-breakfast</th><th>Dinner insulin</th><th>Night</th><th>Notes</th></tr></thead>
+            <tbody>{[...readings].reverse().map((r, i) => (
+              <tr key={`${r.date}-${i}`}>
+                <td><strong>{r.date}</strong></td>
+                <td><span className={statusClass(r.fastingSugar)}>{show(r.fastingSugar)}</span><br/><small>{r.beforeBreakfastTime}</small></td>
+                <td>{show(r.breakfastInsulin)} units<br/><small>{r.breakfastInsulinTime}</small></td>
+                <td><span className={statusClass(r.postBreakfastSugar, true)}>{show(r.postBreakfastSugar)}</span><br/><small>{r.postBreakfastTime}</small></td>
+                <td>{show(r.dinnerInsulin)} units<br/><small>{r.dinnerInsulinTime}</small></td>
+                <td><span className={statusClass(r.nightSugar, true)}>{show(r.nightSugar)}</span><br/><small>{r.nightTestTime}</small></td>
+                <td>{r.notes || '—'}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="grid cards" style={{marginTop:14}}>
         <div className="card"><div className="muted">Latest fasting</div><div className="value">{show(latest?.fastingSugar ?? null)} <small>mg/dL</small></div><div className={statusClass(latest?.fastingSugar ?? null)}>Latest</div></div>
         <div className="card"><div className="muted">Latest post-breakfast</div><div className="value">{show(latest?.postBreakfastSugar ?? null)} <small>mg/dL</small></div><div className={statusClass(latest?.postBreakfastSugar ?? null, true)}>Latest</div></div>
         <div className="card"><div className="muted">Latest night</div><div className="value">{show(latest?.nightSugar ?? null)} <small>mg/dL</small></div><div className={statusClass(latest?.nightSugar ?? null, true)}>Latest</div></div>
@@ -66,26 +86,6 @@ export default function Dashboard({ readings }: { readings: Reading[] }) {
               <Line type="monotone" dataKey="night" name="Night" connectNulls />
             </LineChart>
           </ResponsiveContainer>
-        </div>
-      </section>
-
-      <section className="card" style={{marginTop:14}}>
-        <h2 style={{marginTop:0}}>Daily readings</h2>
-        <div className="table-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Fasting</th><th>Breakfast insulin</th><th>Post-breakfast</th><th>Dinner insulin</th><th>Night</th><th>Notes</th></tr></thead>
-            <tbody>{[...readings].reverse().map((r, i) => (
-              <tr key={`${r.date}-${i}`}>
-                <td><strong>{r.date}</strong></td>
-                <td><span className={statusClass(r.fastingSugar)}>{show(r.fastingSugar)}</span><br/><small>{r.beforeBreakfastTime}</small></td>
-                <td>{show(r.breakfastInsulin)} units<br/><small>{r.breakfastInsulinTime}</small></td>
-                <td><span className={statusClass(r.postBreakfastSugar, true)}>{show(r.postBreakfastSugar)}</span><br/><small>{r.postBreakfastTime}</small></td>
-                <td>{show(r.dinnerInsulin)} units<br/><small>{r.dinnerInsulinTime}</small></td>
-                <td><span className={statusClass(r.nightSugar, true)}>{show(r.nightSugar)}</span><br/><small>{r.nightTestTime}</small></td>
-                <td>{r.notes || '—'}</td>
-              </tr>
-            ))}</tbody>
-          </table>
         </div>
       </section>
 
