@@ -19,9 +19,34 @@ const statusClass = (value: number | null, postMeal = false) => {
 
 const show = (value: number | null) => value === null ? '—' : value;
 
+const calculateAge = (birthDate: string) => {
+  const today = new Date();
+  const birthday = new Date(birthDate);
+  let age = today.getFullYear() - birthday.getFullYear();
+  const monthDifference = today.getMonth() - birthday.getMonth();
+
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthday.getDate())) {
+    age -= 1;
+  }
+
+  return age;
+};
+
+const chartSeries = [
+  { key: 'fasting', name: 'Fasting', color: '#2563eb' },
+  { key: 'postBreakfast', name: 'Post-breakfast', color: '#f97316' },
+  { key: 'night', name: 'Night', color: '#10b981' }
+] as const;
+
 export default function Dashboard({ readings }: { readings: Reading[] }) {
   const latest = readings.at(-1);
   const last7 = readings.slice(-7);
+  const patient = {
+    name: 'Aafhan Javed',
+    birthDate: '2002-07-22',
+    maritalStatus: 'Single'
+  };
+  const patientAge = calculateAge(patient.birthDate);
   const chartData = readings.slice(-30).map((r) => ({
     date: r.date.replace('-2026', ''),
     fasting: r.fastingSugar,
@@ -35,6 +60,9 @@ export default function Dashboard({ readings }: { readings: Reading[] }) {
         <div>
           <h1 style={{margin:'0 0 6px'}}>Blood Sugar Dashboard</h1>
           <div className="muted">Read-only summary for doctor review</div>
+          <div style={{marginTop:12, fontSize:14, color:'#334155'}}>
+            <strong>{patient.name}</strong> • Age {patientAge} • Born July 22, 2002 • {patient.maritalStatus}
+          </div>
         </div>
         <button onClick={() => window.print()} style={{padding:'10px 14px', borderRadius:10, border:'1px solid #d9dde2', background:'#fff', cursor:'pointer'}}>Print / Save PDF</button>
       </div>
@@ -76,14 +104,27 @@ export default function Dashboard({ readings }: { readings: Reading[] }) {
         <div className="chart">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="fasting" name="Fasting" connectNulls />
-              <Line type="monotone" dataKey="postBreakfast" name="Post-breakfast" connectNulls />
-              <Line type="monotone" dataKey="night" name="Night" connectNulls />
+              <CartesianGrid stroke="#dfe6ee" strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fill: '#5b6470', fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#cbd5e1' }} />
+              <YAxis tick={{ fill: '#5b6470', fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#cbd5e1' }} />
+              <Tooltip
+                contentStyle={{ borderRadius: 12, border: '1px solid #d7dee8', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.08)' }}
+                labelStyle={{ color: '#111827', fontWeight: 700 }}
+              />
+              <Legend wrapperStyle={{ paddingTop: 10 }} />
+              {chartSeries.map((series) => (
+                <Line
+                  key={series.key}
+                  type="monotone"
+                  dataKey={series.key}
+                  name={series.name}
+                  stroke={series.color}
+                  strokeWidth={3}
+                  dot={{ r: 3, strokeWidth: 0, fill: series.color }}
+                  activeDot={{ r: 6, stroke: '#fff', strokeWidth: 2, fill: series.color }}
+                  connectNulls
+                />
+              ))}
             </LineChart>
           </ResponsiveContainer>
         </div>
