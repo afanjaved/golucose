@@ -14,6 +14,54 @@ a { color: inherit; }
 table { border-collapse:collapse; width:100%; min-width:960px; }
 th, td { padding:12px; border-bottom:1px solid #eceff2; text-align:left; vertical-align:top; }
 th { font-size:13px; color:#59616a; background:#fafbfc; position:sticky; top:0; }
+.section-head { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:14px; }
+.helper-text { color:#64748b; font-size:13px; }
+.manage-layout { display:grid; gap:14px; }
+.form-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; }
+.field { display:grid; gap:6px; }
+.field label { color:#334155; font-size:13px; font-weight:700; }
+.field input, .field textarea, .search-input {
+  width:100%;
+  border:1px solid #d7dee8;
+  border-radius:12px;
+  padding:10px 12px;
+  font:inherit;
+  color:#111827;
+  background:#fff;
+}
+.field textarea { min-height:110px; resize:vertical; }
+.search-bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.search-input { max-width:380px; }
+.form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; flex-wrap:wrap; }
+.button-primary, .button-secondary, .inline-link {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  padding:10px 14px;
+  font:inherit;
+  font-weight:700;
+  text-decoration:none;
+}
+.button-primary {
+  border:1px solid #0f766e;
+  background:#0f766e;
+  color:#fff;
+  cursor:pointer;
+}
+.button-secondary, .inline-link {
+  border:1px solid #d7dee8;
+  background:#fff;
+  color:#0f172a;
+}
+.status-note {
+  border-radius:14px;
+  padding:14px 16px;
+  font-weight:700;
+}
+.status-note.success { background:#e7f8f2; color:#0f766e; border:1px solid #c2eddf; }
+.status-note.warn { background:#fff4dc; color:#8a5a00; border:1px solid #f3deac; }
+.reading-row-active td { background:#fff9ea; }
 .badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700; }
 .low { background:#e8f1ff; color:#174ea6; }
 .ok { background:#e9f7ef; color:#1e6b3a; }
@@ -26,6 +74,9 @@ th { font-size:13px; color:#59616a; background:#fafbfc; position:sticky; top:0; 
   .cards { grid-template-columns:1fr; }
   .value { font-size:26px; }
   .chart { height:280px; }
+  .form-grid { grid-template-columns:1fr; }
+  .search-input { max-width:none; }
+  .button-primary, .button-secondary, .inline-link { width:100%; }
 }
 @media print {
   body { background:white; }

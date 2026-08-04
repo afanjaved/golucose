@@ -12,3 +12,7 @@ export type Reading = {
   nightSugar: number | null;
   notes: string;
 };
+
+export type SheetReading = Reading & {
+  rowNumber: number;
+};

@@ -1,6 +1,8 @@
 'use client';
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { calculateAge, formatBirthDate, patientProfile } from '@/lib/patient';
+import { formatDateForChart, formatDateForDisplay } from '@/lib/reading-format';
 import type { Reading } from '@/lib/types';
 
 const average = (values: Array<number | null>) => {
@@ -19,19 +21,6 @@ const statusClass = (value: number | null, postMeal = false) => {
 
 const show = (value: number | null) => value === null ? '—' : value;
 
-const calculateAge = (birthDate: string) => {
-  const today = new Date();
-  const birthday = new Date(birthDate);
-  let age = today.getFullYear() - birthday.getFullYear();
-  const monthDifference = today.getMonth() - birthday.getMonth();
-
-  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthday.getDate())) {
-    age -= 1;
-  }
-
-  return age;
-};
-
 const chartSeries = [
   { key: 'fasting', name: 'Fasting', color: '#2563eb' },
   { key: 'postBreakfast', name: 'Post-breakfast', color: '#f97316' },
@@ -41,14 +30,9 @@ const chartSeries = [
 export default function Dashboard({ readings }: { readings: Reading[] }) {
   const latest = readings.at(-1);
   const last7 = readings.slice(-7);
-  const patient = {
-    name: 'Aafhan Javed',
-    birthDate: '2002-07-22',
-    maritalStatus: 'Single'
-  };
-  const patientAge = calculateAge(patient.birthDate);
+  const patientAge = calculateAge(patientProfile.birthDate);
   const chartData = readings.slice(-30).map((r) => ({
-    date: r.date.replace('-2026', ''),
+    date: formatDateForChart(r.date),
     fasting: r.fastingSugar,
     postBreakfast: r.postBreakfastSugar,
     night: r.nightSugar
@@ -61,7 +45,7 @@ export default function Dashboard({ readings }: { readings: Reading[] }) {
           <h1 style={{margin:'0 0 6px'}}>Blood Sugar Dashboard</h1>
           <div className="muted">Read-only summary for doctor review</div>
           <div style={{marginTop:12, fontSize:14, color:'#334155'}}>
-            <strong>{patient.name}</strong> • Age {patientAge} • Born July 22, 2002 • {patient.maritalStatus}
+            <strong>{patientProfile.name}</strong> • Age {patientAge} • Born {formatBirthDate(patientProfile.birthDate)} • {patientProfile.maritalStatus}
           </div>
         </div>
         <button onClick={() => window.print()} style={{padding:'10px 14px', borderRadius:10, border:'1px solid #d9dde2', background:'#fff', cursor:'pointer'}}>Print / Save PDF</button>
@@ -74,7 +58,7 @@ export default function Dashboard({ readings }: { readings: Reading[] }) {
             <thead><tr><th>Date</th><th>Fasting</th><th>Breakfast insulin</th><th>Post-breakfast</th><th>Dinner insulin</th><th>Night</th><th>Notes</th></tr></thead>
             <tbody>{[...readings].reverse().map((r, i) => (
               <tr key={`${r.date}-${i}`}>
-                <td><strong>{r.date}</strong></td>
+                <td><strong>{formatDateForDisplay(r.date)}</strong></td>
                 <td><span className={statusClass(r.fastingSugar)}>{show(r.fastingSugar)}</span><br/><small>{r.beforeBreakfastTime}</small></td>
                 <td>{show(r.breakfastInsulin)} units<br/><small>{r.breakfastInsulinTime}</small></td>
                 <td><span className={statusClass(r.postBreakfastSugar, true)}>{show(r.postBreakfastSugar)}</span><br/><small>{r.postBreakfastTime}</small></td>
